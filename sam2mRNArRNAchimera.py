@@ -43,11 +43,12 @@ def timenow(): return str(datetime.now())[:-7]
 ##b, query bed file:
 ##chr1 36082 35276 -
 def getOverlap(a, b):
-    overlap = int(min(int(a[2]),int(b[2]))) - int(max(int(a[1]),int(b[1])))
-    readslen = (int(b[2]) - int(b[1]))/2
-    if overlap >1 and overlap >= readslen: seganno = "Ture"
-    else: seganno = "False"
-    return seganno
+    if a[0] == b[0]:
+        overlap = int(min(int(a[2]),int(b[2]))) - int(max(int(a[1]),int(b[1])))
+        readslen = (int(b[2]) - int(b[1]))/2
+        if overlap >1 and overlap >= readslen: seganno = "Ture"
+        else: seganno = "False"
+        return seganno
  
 
 def mergeCIGAR(CIGAR): 
