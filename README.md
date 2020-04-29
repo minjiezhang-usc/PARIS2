@@ -5,6 +5,7 @@ In order to accurately and easily analyze PARIS data, pseudogenes and multicopy 
 The curated genome of hg38/mm10 can be downloaded from https://drive.google.com/open?id=1wHSC-mf1jNNClXrVqMugqVmDVT4Crxzz
 
 
+
 2, Mapping
 Reads were mapped to manually curated hg38 or mm10 genome using STAR program(Dobin, Davis et al. 2013). 
 
@@ -17,6 +18,7 @@ Global profiling of spliceosomal snRNP binding sites:
 STAR --runThreadN 8 --runMode alignReads --genomeDir OuputPath --readFilesIn SampleFastq --outFileNamePrefix Outprefix --genomeLoad NoSharedMemory --outReadsUnmapped Fastx  --outFilterMultimapNmax 100 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 --outSAMattributes All --outSAMtype BAM Unsorted SortedByCoordinate --alignIntronMin 1 --scoreGap 0 --scoreGapNoncan 0 --scoreGapGCAG 0 --scoreGapATAC 0 --scoreGenomicLengthLog2scale -1 --chimOutType WithinBAM HardClip Junctions --chimSegmentMin 5 --chimJunctionOverhangMin 5 --chimScoreJunctionNonGTAG 0 --chimScoreDropMax 80 --chimNonchimScoreDropMin 80 --chimScoreSeparation 0 --chimSegmentReadGapMax 30 --limitBAMsortRAM 20000000000
 
 
+
 3, Global profiling of ribosome small subunit (SSU) analysis
 3.1 Building bed file for protein_coding genes using gtf2geneBed.py script:
 
@@ -25,6 +27,7 @@ eg: python gtf2geneBed.py gencode.v33.primary_assembly.annotation.gtf hg38_gene.
 3.2 Extracting mRNA-rRNA chimeric alignments using awk and sam2mRNArRNAchimera.py:
 
 eg: samtools view -h SampleAligned.sortedByCoord.out.bam | awk  '$1~/^@/ || $0~/hs45S/' > Sample_rRNA.sam
+    
     python sam2mRNArRNAchimera.py Sample_rRNA.sam hg38_UTRCDS_anno.bed hs45S Sample_mRNArRNA.sam
 
 3.3 Analyzing the binding sites of mRNAs on the hs45S:
