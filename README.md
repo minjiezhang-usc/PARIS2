@@ -21,31 +21,47 @@ Global profiling of spliceosomal snRNP binding sites:
 
 
 3, Global profiling of ribosome small subunit (SSU) analysis
-3.1 Building bed file for protein_coding genes using gtf2geneBed.py script:
-    
-    python gtf2geneBed.py gencode.v33.primary_assembly.annotation.gtf hg38_gene.bed
 
-3.2 Extracting mRNA-rRNA chimeric alignments using awk and sam2mRNArRNAchimera.py:
+3.1 Extracting mRNA-rRNA chimeric alignments using awk and sam2mRNArRNAchimera.py:
 
     samtools view -h SampleAligned.sortedByCoord.out.bam | awk  '$1~/^@/ || $0~/hs45S/' > Sample_rRNA.sam
     python sam2mRNArRNAchimera.py Sample_rRNA.sam hg38_UTRCDS_anno.bed hs45S Sample_mRNArRNA.sam
 
-3.3 Analyzing the binding sites of mRNAs on the hs45S:
+3.2 Analyzing the binding sites of mRNAs on the hs45S:
     
     Sample_mRNArRNA.sam can be converted to bam file and loaded to IGV to check the mRNA-rRNA binding sites on rRNA.
 
-3.4 Analyzing he binding sites of h18 and h26 on the meta mRNA:
+3.3 Analyzing he binding sites of h18 and h26 on the meta mRNA:
     
     python mRNAmegaCoverage.py Sample_mRNArRNA.bam hg38_UTRCDS_anno.bed 200 mmH26.dist  
 
 
+4, Global profiling of spliceosomal snRNP binding sites
 
+4.1 Extracting snRNA-mRNA interaction chimeric alignments:
+     
+    samtools view -h SampleAligned_sorted.bam hssnRNA | awk  '$1~/^@/ || $21!~/hssnRNA/ && $21~"SA:Z" && $21~",0;"' > Sample_tohssnRNA.sam
 
+4.2 snRNA-target interaction alignments with at least 15 nt matches for the snRNA targets were filtered using filterchimera.py
 
+    python filterchimera.py Sample_tohssnRNA.sam Sample_tohssnRNA_15M.sam 15
 
-2, Global profiling of spliceosomal snRNP binding sites
+4.3 200 nt windows around splice sites was extracted for gencode gtf file using gtf2splice.py. 
 
-2.1, Extracting snRNA-mRNA interaction chimeric alignments:
-samtools view -h AMT_Stress_trim_nodup_bc07-bc12_hg38mask14addAligned_sorted.bam hssnRNA | awk  '$1~/^@/ || $21!~/hssnRNA/ && $21~"SA:Z" && $21~",0;"' > AMT_Stress_trim_nodup_bc07-bc12_hg38mask14addAligned_hssnRNA_toother.sam
+    python gtf2splice.py gencode.v33.annotation.gtf gencode.v33.annotation_splice200nt 200
 
-snRNA-target interaction alignments with at least 15 nt matches for the snRNA targets were filtered using filterchimera.py. 200 nt windows around splice sites was extracted for gencode gtf file using gtf2splice.py. Chimera connecting specific snRNA regions were further extracted using sam2chimera.py script. Coverage along the 200nt windows was calculated using bedtools coverage. Meta-analysis for all windows around start 5’ and 3’ splice sites were performed with windowmeta.py. The Output.bedgraph can be loaded to IGV for visualization.
+4.4 Chimera connecting specific snRNA regions were further extracted using sam2chimera.py script. 
+
+    python sam2chimera.py Sample_tohssnRNA_15M.sam Sample_tohssnRNA_15M_U1_1to12_15M.sam hssnRNA:1-12 15
+
+4.4 Coverage along the 200nt windows was calculated using bedtools coverage. 
+
+    bedtools coverage -d -a gencode.v33.annotation_splice200nt_splice3.bed -b Sample_tohssnRNA_15M_U1_1to12_15M.sam > Sample_tohssnRNA_15M_U1_1to12_15M_splice200nt_splice3.bed
+    bedtools coverage -d -a gencode.v33.annotation_splice200nt_splice5.bed -b Sample_tohssnRNA_15M_U1_1to12_15M.sam > Sample_tohssnRNA_15M_U1_1to12_15M_splice200nt_splice5.bed
+
+4.5 Meta-analysis for all windows around start 5’ and 3’ splice sites were performed with windowmeta.py. 
+
+    python windowmeta.py 400 Sample_tohssnRNA_15M_U1_1to12_15M_splice200nt_splice3.bed Sample_tohssnRNA_15M_U1_1to12_15M_splice200nt_splice5_sum.bedgraph
+    python windowmeta.py 400 Sample_tohssnRNA_15M_U1_1to12_15M_splice200nt_splice5.bed Sample_tohssnRNA_15M_U1_1to12_15M_splice200nt_splice5_sum.bedgraph
+
+4.6 The Output.bedgraph can be loaded to IGV for visualization.
