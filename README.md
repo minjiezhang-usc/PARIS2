@@ -9,24 +9,30 @@ The curated genome of hg38/mm10 can be downloaded from https://drive.google.com/
 Reads were mapped to manually curated hg38 or mm10 genome using STAR program(Dobin, Davis et al. 2013). 
 
 Global profiling of ribosome small subunit (SSU) analysis:
+
 STAR --runThreadN 8 --runMode alignReads --genomeDir OuputPath --readFilesIn SampleFastq  --outFileNamePrefix Outprefix --genomeLoad NoSharedMemory outReadsUnmapped Fastx  --outFilterMultimapNmax 10 --outFilterScoreMinOverLread 0 --outSAMattributes All --outSAMtype BAM Unsorted SortedByCoordinate --alignIntronMin 1 --scoreGap 0 --scoreGapNoncan 0 --scoreGapGCAG 0 --scoreGapATAC 0 --scoreGenomicLengthLog2scale -1 --chimOutType WithinBAM HardClip --chimSegmentMin 5 --chimJunctionOverhangMin 5 --chimScoreJunctionNonGTAG 0 --chimScoreDropMax 80 --chimNonchimScoreDropMin 20
 
 Global profiling of spliceosomal snRNP binding sites:
+
 STAR --runThreadN 8 --runMode alignReads --genomeDir OuputPath --readFilesIn SampleFastq --outFileNamePrefix Outprefix --genomeLoad NoSharedMemory --outReadsUnmapped Fastx  --outFilterMultimapNmax 100 --outFilterScoreMinOverLread 0 --outFilterMatchNminOverLread 0 --outSAMattributes All --outSAMtype BAM Unsorted SortedByCoordinate --alignIntronMin 1 --scoreGap 0 --scoreGapNoncan 0 --scoreGapGCAG 0 --scoreGapATAC 0 --scoreGenomicLengthLog2scale -1 --chimOutType WithinBAM HardClip Junctions --chimSegmentMin 5 --chimJunctionOverhangMin 5 --chimScoreJunctionNonGTAG 0 --chimScoreDropMax 80 --chimNonchimScoreDropMin 80 --chimScoreSeparation 0 --chimSegmentReadGapMax 30 --limitBAMsortRAM 20000000000
 
 
 3, Global profiling of ribosome small subunit (SSU) analysis
 3.1 Building bed file for protein_coding genes using gtf2geneBed.py script:
+
 eg: python gtf2geneBed.py gencode.v33.primary_assembly.annotation.gtf hg38_gene.bed
 
 3.2 Extracting mRNA-rRNA chimeric alignments using awk and sam2mRNArRNAchimera.py:
+
 eg: samtools view -h SampleAligned.sortedByCoord.out.bam | awk  '$1~/^@/ || $0~/hs45S/' > Sample_rRNA.sam
     python sam2mRNArRNAchimera.py Sample_rRNA.sam hg38_UTRCDS_anno.bed hs45S Sample_mRNArRNA.sam
 
 3.3 Analyzing the binding sites of mRNAs on the hs45S:
+
 Sample_mRNArRNA.sam can be converted to bam file and loaded to IGV to check the mRNA-rRNA binding sites on rRNA.
 
 3.4 Analyzing he binding sites of h18 and h26 on the meta mRNA:
+
 eg: python mRNAmegaCoverage.py Sample_mRNArRNA.bam hg38_UTRCDS_anno.bed 200 mmH26.dist  
 
 
