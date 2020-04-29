@@ -29,10 +29,11 @@ Global profiling of spliceosomal snRNP binding sites:
 
 3.2 Analyzing the binding sites of mRNAs on the hs45S:
     
-    Sample_mRNArRNA.sam can be converted to bam file and loaded to IGV to check the mRNA-rRNA binding sites on rRNA.
+Sample_mRNArRNA.sam can be converted to bam file and loaded to IGV to check the mRNA-rRNA binding sites on rRNA.
 
 3.3 Analyzing he binding sites of h18 and h26 on the meta mRNA:
     
+    python sam2mRNArRNAchimera.py Sample_rRNA.sam h18_h26.bed hs45S Sample_mRNArRNA.sam
     python mRNAmegaCoverage.py Sample_mRNArRNA.bam hg38_UTRCDS_anno.bed 200 mmH26.dist  
 
 
