@@ -1,11 +1,13 @@
 # PARIS2 analysis strategy
 
 1, The masked genome indicies
+
 In order to accurately and easily analyze PARIS data, pseudogenes and multicopy genes from gencode, refGene and Dfam were masked from hg38/mm10 genome. And then single copy of them was added back as a separated “chromosome”. For example, multicopy of snRNAs were masked from the basic hg38/mm10 assembly genome, and 9 snRNAs (U1, U2, U4, U5, U6, U11, U12, U4atac and U6atac) were concatenated into one reference, separated by 100nt “N”s, was added back. The curated hg38/mm10 genome contained 25 reference sequences, or “chromosomes”, masked the multicopy genes and added back single copies. This reference is best suited for the PARIS analysis. 
 The curated genome of hg38/mm10 can be downloaded from https://drive.google.com/open?id=1wHSC-mf1jNNClXrVqMugqVmDVT4Crxzz
 
 
 2, Mapping
+
 Reads were mapped to manually curated hg38 or mm10 genome using STAR program(Dobin, Davis et al. 2013). 
 
 Global profiling of ribosome small subunit (SSU) analysis:
